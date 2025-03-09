@@ -1,0 +1,3 @@
+"""
+UI komponenty pro BidMaster.
+""" 

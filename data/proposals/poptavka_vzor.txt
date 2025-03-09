@@ -1,0 +1,29 @@
+Poptávka implementace MidPoint
+
+Dobrý den,
+
+jsme středně velká společnost působící v oblasti finančních služeb a hledáme řešení pro správu identit a přístupů (IAM) pro naše interní systémy. Po průzkumu trhu jsme se rozhodli pro implementaci řešení MidPoint.
+
+Naše společnost má přibližně 500 zaměstnanců a používáme následující systémy:
+- Active Directory pro správu uživatelů
+- Microsoft 365 pro e-maily a kancelářské aplikace
+- Interní CRM systém postavený na technologii Java
+- Účetní systém SAP
+- Několik webových aplikací pro interní použití
+
+Požadujeme:
+1. Implementaci MidPoint pro centrální správu identit
+2. Synchronizaci uživatelů s Active Directory
+3. Automatické zřizování a rušení účtů v Microsoft 365
+4. Napojení na interní CRM a SAP
+5. Implementaci workflow pro schvalování přístupů
+6. Základní reporting a audit
+
+Rádi bychom, aby implementace proběhla v průběhu následujících 3-6 měsíců. Rozpočet na projekt máme přibližně 1,5 milionu Kč.
+
+Prosím o zaslání nabídky s detailním popisem řešení, harmonogramem implementace a cenovou kalkulací.
+
+S pozdravem,
+Jan Novák
+IT manažer
+Finanční služby, a.s. 

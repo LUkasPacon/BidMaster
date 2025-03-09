@@ -1,0 +1,128 @@
+Nabídka implementace MidPoint pro Finanční služby, a.s.
+
+1. Úvod
+
+Vážený pane Nováku,
+
+děkujeme za Váš zájem o implementaci řešení MidPoint pro správu identit a přístupů (IAM) ve Vaší společnosti. Na základě Vaší poptávky Vám předkládáme nabídku implementace MidPoint, která pokrývá všechny Vámi požadované funkcionality a integrační scénáře.
+
+MidPoint je open-source řešení pro správu identit a přístupů, které poskytuje komplexní funkcionalitu pro centralizovanou správu uživatelských účtů, automatizaci procesů zřizování a rušení přístupů, a pokročilé možnosti reportingu a auditu. Jako certifikovaný implementační partner MidPoint máme rozsáhlé zkušenosti s implementací tohoto řešení v organizacích podobné velikosti jako je Vaše.
+
+2. Popis řešení
+
+Navrhované řešení MidPoint bude implementováno jako centrální bod pro správu identit a přístupů ve Vaší organizaci. Řešení bude zahrnovat následující komponenty:
+
+2.1 Centrální databáze identit
+MidPoint bude sloužit jako centrální databáze všech uživatelských identit ve Vaší organizaci. Každý uživatel bude mít v systému jedinečný záznam obsahující všechny relevantní atributy a informace o přiřazených rolích a oprávněních.
+
+2.2 Konektory pro integraci s cílovými systémy
+Implementujeme následující konektory pro integraci s Vašimi systémy:
+- Konektor pro Active Directory
+- Konektor pro Microsoft 365
+- Konektor pro SAP
+- Vlastní konektor pro Váš interní CRM systém
+- Konektor pro webové aplikace (dle potřeby REST API nebo SCIM)
+
+2.3 Workflow pro schvalování přístupů
+Implementujeme workflow pro schvalování přístupů, které umožní definovat schvalovací procesy pro různé typy přístupů. Workflow bude zahrnovat notifikace e-mailem a možnost schválení/zamítnutí přímo z e-mailu.
+
+2.4 Reporting a audit
+Implementujeme základní reporty pro sledování přístupů a změn v systému. Všechny změny budou auditovány a bude možné generovat reporty pro účely compliance a bezpečnostních auditů.
+
+3. Rozsah prací
+
+Implementace bude rozdělena do následujících fází:
+
+3.1 Analýza a návrh
+- Detailní analýza požadavků
+- Návrh architektury řešení
+- Návrh datového modelu
+- Návrh integračních scénářů
+- Návrh rolí a oprávnění
+- Návrh workflow pro schvalování přístupů
+
+3.2 Implementace základní infrastruktury
+- Instalace a konfigurace MidPoint
+- Konfigurace databáze
+- Konfigurace zabezpečení
+- Konfigurace zálohování
+
+3.3 Implementace konektorů
+- Implementace konektoru pro Active Directory
+- Implementace konektoru pro Microsoft 365
+- Implementace konektoru pro SAP
+- Implementace vlastního konektoru pro interní CRM
+- Implementace konektorů pro webové aplikace
+
+3.4 Implementace workflow
+- Implementace workflow pro schvalování přístupů
+- Implementace notifikací
+- Implementace self-service portálu
+
+3.5 Implementace reportingu a auditu
+- Implementace základních reportů
+- Konfigurace auditování
+- Implementace dashboardů
+
+3.6 Testování
+- Funkční testování
+- Integrační testování
+- Výkonnostní testování
+- Bezpečnostní testování
+
+3.7 Nasazení do produkce
+- Příprava produkčního prostředí
+- Migrace dat
+- Nasazení do produkce
+- Podpora při nasazení
+
+3.8 Dokumentace a školení
+- Vytvoření uživatelské dokumentace
+- Vytvoření administrátorské dokumentace
+- Školení administrátorů
+- Školení koncových uživatelů
+
+4. Harmonogram
+
+Implementace bude probíhat podle následujícího harmonogramu:
+
+Fáze 1: Analýza a návrh - 4 týdny
+Fáze 2: Implementace základní infrastruktury - 2 týdny
+Fáze 3: Implementace konektorů - 6 týdnů
+Fáze 4: Implementace workflow - 4 týdny
+Fáze 5: Implementace reportingu a auditu - 2 týdny
+Fáze 6: Testování - 4 týdny
+Fáze 7: Nasazení do produkce - 2 týdny
+Fáze 8: Dokumentace a školení - 2 týdny
+
+Celková doba implementace: 24 týdnů (6 měsíců)
+
+5. Cenová nabídka
+
+Cenová nabídka za implementaci řešení MidPoint dle specifikace výše:
+
+Analýza a návrh: 250 000 Kč
+Implementace základní infrastruktury: 150 000 Kč
+Implementace konektorů: 450 000 Kč
+Implementace workflow: 200 000 Kč
+Implementace reportingu a auditu: 150 000 Kč
+Testování: 150 000 Kč
+Nasazení do produkce: 100 000 Kč
+Dokumentace a školení: 150 000 Kč
+
+Celková cena implementace: 1 600 000 Kč bez DPH
+
+V ceně je zahrnuta podpora po dobu 3 měsíců od nasazení do produkce. Po uplynutí této doby nabízíme možnost uzavření servisní smlouvy s různými úrovněmi podpory.
+
+6. Kontaktní informace
+
+Pro další informace nebo upřesnění nabídky nás prosím kontaktujte:
+
+Jméno: Petr Svoboda
+Pozice: Senior konzultant
+E-mail: petr.svoboda@implementator.cz
+Telefon: +420 123 456 789
+
+S pozdravem,
+Implementátor, s.r.o.
+www.implementator.cz 

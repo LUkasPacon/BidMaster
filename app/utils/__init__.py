@@ -1,0 +1,3 @@
+"""
+Utility pro BidMaster.
+""" 

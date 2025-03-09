@@ -1,0 +1,11 @@
+{
+  "client_name": "ABC Finance, a.s.",
+  "date": "2025-03-09",
+  "version": "1.0",
+  "introduction": "Vážený pane Nováku, děkujeme za Váš zájem o implementaci řešení MidPoint pro správu identit a přístupů (IAM) ve Vaší společnosti. Na základě Vaší poptávky Vám předkládáme nabídku implementace MidPoint, která pokrývá všechny Vámi požadované funkcionality a integrační scénáře.",
+  "solution_description": "MidPoint je open-source řešení pro správu identit a přístupů, které poskytuje komplexní funkcionalitu pro centralizovanou správu uživatelských účtů, automatizaci procesů zřizování a rušení přístupů, řízení životního cyklu identit a reporting. Řešení bude implementováno jako centrální bod pro správu identit a přístupů ve Vaší organizaci. Implementace bude zahrnovat následující komponenty: centrální databáze identit, konektory pro integraci s cílovými systémy, workflow engine pro schvalování přístupů, self-service portál pro uživatele a reportingový modul.",
+  "scope_of_work": "Implementace zahrnuje následující práce:\n1. Instalace a konfigurace MidPoint na serverech zákazníka\n2. Integrace s Active Directory\n3. Integrace s Microsoft 365\n4. Integrace s interním CRM systémem\n5. Integrace se SAP\n6. Implementace workflow pro schvalování přístupů\n7. Konfigurace reportingu a auditu\n8. Školení administrátorů a uživatelů\n9. Dokumentace řešení",
+  "timeline": "Implementace bude probíhat v následujících fázích:\n1. Analýza a návrh řešení (2 týdny)\n2. Instalace a základní konfigurace (2 týdny)\n3. Implementace integrací (8 týdnů)\n4. Implementace workflow (2 týdny)\n5. Testování (2 týdny)\n6. Školení a dokumentace (2 týdny)\n7. Nasazení do produkce (2 týdny)\n\nCelková doba implementace: 20 týdnů",
+  "pricing": "Celková cena implementace je 1 450 000 Kč bez DPH a zahrnuje následující položky:\n\n1. Licence MidPoint Enterprise: 450 000 Kč\n2. Implementační práce: 800 000 Kč\n3. Školení: 100 000 Kč\n4. Dokumentace: 50 000 Kč\n5. Podpora po dobu 12 měsíců: 50 000 Kč",
+  "contact_info": "Pro další informace nás kontaktujte na info@example.com nebo na telefonu +420 123 456 789."
+} 
