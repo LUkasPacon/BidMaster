@@ -12,6 +12,14 @@ import docx
 import re
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_core.documents import Document
+from dotenv import load_dotenv
+from langchain_pinecone import PineconeVectorStore
+from langchain_community.document_loaders import (
+    PyPDFLoader,
+    Docx2txtLoader,
+    JSONLoader
+)
+import pinecone
 
 # Přidání podpory pro PDF
 try:
@@ -34,6 +42,103 @@ from app.utils.vector_store import (
 from app.config import get_config
 
 config = get_config()
+
+load_dotenv()
+
+def init_pinecone() -> PineconeVectorStore:
+    """Inicializace Pinecone."""
+    pinecone.init(
+        api_key=os.getenv("PINECONE_API_KEY", ""),
+        environment=os.getenv("PINECONE_ENV", "")
+    )
+    return PineconeVectorStore(
+        index_name=os.getenv("PINECONE_INDEX", "bidmaster"),
+        namespace=os.getenv("PINECONE_NAMESPACE", "proposals")
+    )
+
+def load_document(file_path: str) -> List[Dict[str, Any]]:
+    """
+    Načte dokument podle typu souboru.
+    
+    Args:
+        file_path: Cesta k souboru
+        
+    Returns:
+        List[Dict[str, Any]]: Seznam dokumentů s metadaty
+    """
+    path = Path(file_path)
+    
+    if path.suffix.lower() == '.pdf':
+        loader = PyPDFLoader(str(path))
+        return loader.load()
+    elif path.suffix.lower() == '.docx':
+        loader = Docx2txtLoader(str(path))
+        return loader.load()
+    elif path.suffix.lower() == '.json':
+        loader = JSONLoader(
+            file_path=str(path),
+            jq_schema='.content',
+            text_content=False
+        )
+        return loader.load()
+    else:
+        raise ValueError(f"Nepodporovaný typ souboru: {path.suffix}")
+
+def process_documents(documents: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+    """
+    Zpracuje dokumenty pro import.
+    
+    Args:
+        documents: Seznam dokumentů
+        
+    Returns:
+        List[Dict[str, Any]]: Zpracované dokumenty
+    """
+    text_splitter = RecursiveCharacterTextSplitter(
+        chunk_size=500,
+        chunk_overlap=100,
+        length_function=len
+    )
+    
+    processed_docs = []
+    for doc in documents:
+        chunks = text_splitter.split_text(doc.page_content)
+        for i, chunk in enumerate(chunks):
+            processed_docs.append({
+                "page_content": chunk,
+                "metadata": {
+                    **doc.metadata,
+                    "chunk_id": i,
+                    "total_chunks": len(chunks)
+                }
+            })
+    return processed_docs
+
+def import_proposals(file_paths: List[str]) -> None:
+    """
+    Importuje návrhy do vektorové databáze.
+    
+    Args:
+        file_paths: Seznam cest k souborům
+    """
+    vectorstore = init_pinecone()
+    
+    for file_path in file_paths:
+        try:
+            # Načtení dokumentu
+            documents = load_document(file_path)
+            
+            # Zpracování dokumentů
+            processed_docs = process_documents(documents)
+            
+            # Import do Pinecone
+            vectorstore.add_documents(processed_docs)
+            
+            print(f"Úspěšně importován soubor: {file_path}")
+            
+        except Exception as e:
+            print(f"Chyba při importu souboru {file_path}: {e}")
+            raise
 
 def extract_text_from_docx(file_path: str) -> str:
     """
@@ -385,104 +490,6 @@ def process_directory(directory_path: str) -> List[Dict[str, Any]]:
                     documents.append(doc)
     
     return documents
-
-def import_proposals(directory_path: str, namespace: Optional[str] = None) -> None:
-    """
-    Importuje nabídky do vektorové databáze.
-    
-    Args:
-        directory_path: Cesta k adresáři s nabídkami
-        namespace: Namespace pro vektorovou databázi (volitelné)
-    """
-    print(f"Inicializace vektorové databáze...")
-    vector_store = init_vector_store()
-    embeddings = get_embeddings()
-    
-    # Pokud není zadán namespace, použijeme výchozí z konfigurace
-    if namespace is None:
-        namespace = os.getenv("PINECONE_NAMESPACE", "proposals")
-        print(f"Používám výchozí namespace: {namespace}")
-    
-    print(f"Zpracování nabídek z adresáře {directory_path}...")
-    documents = process_directory(directory_path)
-    
-    if not documents:
-        print("Nebyly nalezeny žádné dokumenty k importu")
-        return
-    
-    print(f"Nalezeno {len(documents)} dokumentů")
-    
-    # Vytvoření text splitteru pro rozdělení textu na menší části
-    text_splitter = RecursiveCharacterTextSplitter(
-        chunk_size=500,
-        chunk_overlap=100,
-        length_function=len
-    )
-    
-    # Zpracování každého dokumentu
-    for i, doc in enumerate(documents):
-        print(f"Zpracovávám dokument {i+1}/{len(documents)}...")
-        try:
-            # Získání textu a metadat
-            text = doc["text"]
-            metadata = doc["metadata"]
-            
-            # Omezení velikosti metadat
-            minimal_metadata = {
-                "source": metadata.get("source", "")[-100:],  # Omezení délky cesty
-                "title": metadata.get("title", "")[:50],      # Omezení délky názvu
-                "client_name": metadata.get("client_name", "")[:50],  # Omezení délky názvu klienta
-                "date": metadata.get("date", "")[:20],        # Omezení délky data
-                "version": metadata.get("version", "")[:10],  # Omezení délky verze
-                "truncated": True
-            }
-            
-            # Rozdělení textu na menší části
-            chunks = text_splitter.split_text(text)
-            print(f"Text rozdělen na {len(chunks)} částí.")
-            
-            # Vytvoření dokumentů pro každou část textu
-            chunk_docs = []
-            for j, chunk in enumerate(chunks):
-                # Přidání informace o části do metadat
-                chunk_metadata = minimal_metadata.copy()
-                chunk_metadata["chunk"] = j
-                chunk_metadata["chunk_total"] = len(chunks)
-                
-                # Vytvoření dokumentu
-                chunk_doc = Document(page_content=chunk, metadata=chunk_metadata)
-                chunk_docs.append(chunk_doc)
-            
-            # Přímé vytvoření vektorů pomocí from_documents
-            try:
-                from langchain_pinecone import PineconeVectorStore
-                print(f"Používám PineconeVectorStore.from_documents pro import dokumentu {i+1}/{len(documents)}...")
-                print(f"Index: {config.pinecone_index_name}, Namespace: {namespace}")
-                print(f"Počet chunků: {len(chunk_docs)}")
-                
-                PineconeVectorStore.from_documents(
-                    documents=chunk_docs,
-                    embedding=embeddings,
-                    index_name=config.pinecone_index_name,
-                    namespace=namespace
-                )
-                print(f"Dokument {i+1}/{len(documents)} úspěšně importován.")
-            except Exception as e:
-                print(f"Chyba při použití from_documents: {e}")
-                print("Zkouším alternativní metodu add_documents_to_vector_store...")
-                try:
-                    # Pokud není k dispozici from_documents, použijeme add_documents
-                    add_documents_to_vector_store(vector_store, documents=chunk_docs, namespace=namespace)
-                    print(f"Dokument {i+1}/{len(documents)} úspěšně importován pomocí add_documents.")
-                except Exception as e2:
-                    print(f"Chyba i při použití add_documents_to_vector_store: {e2}")
-                    raise
-            
-        except Exception as e:
-            print(f"Chyba při importu dokumentu {i+1}/{len(documents)}: {e}")
-            print("Pokračuji dalším dokumentem...")
-    
-    print(f"Import dokončen. Importováno {len(documents)} dokumentů.")
 
 def main():
     """

@@ -1,3 +1,3 @@
 """
-Utility pro BidMaster.
+Utility functions for BidMaster.
 """ 
