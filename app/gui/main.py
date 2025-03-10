@@ -127,10 +127,202 @@ def get_next_question(state: ProposalState) -> str:
     response = st.session_state.llm.invoke(messages)
     return response.content
 
+def generate_solution_description(state: ProposalState) -> str:
+    """Generuje sekci s popisem řešení."""
+    system_prompt = """Jsi profesionální business konzultant s rozsáhlými znalostmi v oblasti implementace MidPoint.
+    Tvým úkolem je vytvořit profesionální popis řešení pro obchodní nabídku, který bude:
+    - Věcný a konkrétní
+    - Profesionální a formální
+    - V českém jazyce
+    - Bez technického žargonu, srozumitelná pro business stakeholdery
+    - Přehledně strukturovaný s odstavci
+    """
+    
+    # Hledání relevantního kontextu
+    context = ""
+    if state.client_request:
+        similar_proposals = search_proposals(state.client_request)
+        if similar_proposals:
+            context = "\n".join([p["content"] for p in similar_proposals[:3]])
+    
+    solution_prompt = f"""Vytvoř profesionální "Popis řešení" pro nabídku implementace MidPoint.
+    
+    Informace:
+    - Poptávka klienta: {state.client_request}
+    - Počet uživatelů: {state.expected_users}
+    - Požadované moduly: {', '.join(state.modules)}
+    - Integrace: {', '.join(state.integrations) if state.integrations else 'Není specifikováno'}
+    
+    Kontext z podobných nabídek:
+    {context}
+    
+    Vytvoř stručný, ale informativní popis MidPoint řešení, který:
+    1. Vysvětlí co je MidPoint a jaké jsou jeho hlavní přínosy
+    2. Zdůrazní klíčové funkce relevantní pro tohoto klienta
+    3. Popíše, jak řešení adresuje klientovy potřeby z poptávky
+    
+    Výstup MUSÍ být čistý text s odstavci, bez JSON nebo kódu!
+    """
+    
+    messages = [
+        SystemMessage(content=system_prompt),
+        HumanMessage(content=solution_prompt)
+    ]
+    
+    add_log("Generuji popis řešení...")
+    response = st.session_state.llm.invoke(messages)
+    return response.content
+
+def generate_scope_of_work(state: ProposalState) -> str:
+    """Generuje sekci s rozsahem prací."""
+    system_prompt = """Jsi profesionální business konzultant s rozsáhlými znalostmi v oblasti implementace MidPoint.
+    Tvým úkolem je vytvořit profesionální popis rozsahu prací pro obchodní nabídku, který bude:
+    - Věcný a konkrétní
+    - Profesionální a formální
+    - V českém jazyce
+    - Bez technického žargonu, srozumitelná pro business stakeholdery
+    - Přehledně strukturovaný s nadpisy a odstavci
+    """
+    
+    # Hledání relevantního kontextu
+    context = ""
+    if state.client_request:
+        similar_proposals = search_proposals(state.client_request)
+        if similar_proposals:
+            context = "\n".join([p["content"] for p in similar_proposals[:3]])
+    
+    scope_prompt = f"""Vytvoř profesionální sekci "Rozsah prací" pro nabídku implementace MidPoint.
+    
+    Informace:
+    - Poptávka klienta: {state.client_request}
+    - Požadované moduly: {', '.join(state.modules)}
+    - Integrace: {', '.join(state.integrations) if state.integrations else 'Není specifikováno'}
+    - Školení: {', '.join(state.training) if state.training else 'Není specifikováno'}
+    
+    Kontext z podobných nabídek:
+    {context}
+    
+    Vytvoř přehledně strukturovaný popis rozsahu prací, který:
+    1. Začíná úvodním odstavcem shrnujícím celkový rozsah implementace
+    2. Obsahuje 4-5 konkrétních oblastí práce
+    3. Každou oblast detailně popíše včetně očekávaných výstupů
+    
+    Formátuj výstup jako souvislý text s nadpisy a odstavci.
+    Výstup MUSÍ být čistý text, bez JSON struktur nebo kódu!
+    """
+    
+    messages = [
+        SystemMessage(content=system_prompt),
+        HumanMessage(content=scope_prompt)
+    ]
+    
+    add_log("Generuji rozsah prací...")
+    response = st.session_state.llm.invoke(messages)
+    return response.content
+
+def generate_timeline(state: ProposalState) -> str:
+    """Generuje sekci s harmonogramem."""
+    system_prompt = """Jsi profesionální business konzultant s rozsáhlými znalostmi v oblasti implementace MidPoint.
+    Tvým úkolem je vytvořit profesionální harmonogram pro obchodní nabídku, který bude:
+    - Věcný a konkrétní
+    - Profesionální a formální
+    - V českém jazyce
+    - Bez technického žargonu, srozumitelná pro business stakeholdery
+    - Přehledně strukturovaný s nadpisy a odstavci
+    """
+    
+    # Hledání relevantního kontextu
+    context = ""
+    if state.client_request:
+        similar_proposals = search_proposals(state.client_request)
+        if similar_proposals:
+            context = "\n".join([p["content"] for p in similar_proposals[:3]])
+    
+    timeline_prompt = f"""Vytvoř profesionální sekci "Harmonogram" pro nabídku implementace MidPoint.
+    
+    Informace:
+    - Poptávka klienta: {state.client_request}
+    - Požadovaný termín dokončení: {state.deadline}
+    - Rozsah prací: {', '.join(state.modules)}
+    - Integrace: {', '.join(state.integrations) if state.integrations else 'Není specifikováno'}
+    
+    Kontext z podobných nabídek:
+    {context}
+    
+    Vytvoř přehledný harmonogram implementace, který:
+    1. Začíná úvodním odstavcem shrnujícím celkovou dobu implementace
+    2. Obsahuje seznam jednotlivých fází projektu (analýza, návrh, implementace, testování)
+    3. Pro každou fázi uvádí její název, dobu trvání a stručný popis aktivit
+    4. Končí závěrečným odstavcem shrnujícím celkový časový plán
+    
+    Formátuj výstup jako souvislý text s nadpisy a odstavci.
+    Výstup MUSÍ být čistý text, bez JSON struktur nebo kódu!
+    """
+    
+    messages = [
+        SystemMessage(content=system_prompt),
+        HumanMessage(content=timeline_prompt)
+    ]
+    
+    add_log("Generuji harmonogram...")
+    response = st.session_state.llm.invoke(messages)
+    return response.content
+
+def generate_pricing(state: ProposalState) -> str:
+    """Generuje sekci s cenovou nabídkou."""
+    system_prompt = """Jsi profesionální business konzultant s rozsáhlými znalostmi v oblasti implementace MidPoint.
+    Tvým úkolem je vytvořit profesionální cenovou nabídku pro obchodní nabídku, která bude:
+    - Věcná a konkrétní
+    - Profesionální a formální
+    - V českém jazyce
+    - Bez technického žargonu, srozumitelná pro business stakeholdery
+    - Přehledně strukturovaná s nadpisy a odstavci
+    """
+    
+    # Hledání relevantního kontextu
+    context = ""
+    if state.client_request:
+        similar_proposals = search_proposals(state.client_request)
+        if similar_proposals:
+            context = "\n".join([p["content"] for p in similar_proposals[:3]])
+    
+    pricing_prompt = f"""Vytvoř profesionální sekci "Cenová nabídka" pro implementaci MidPoint.
+    
+    Informace:
+    - Poptávka klienta: {state.client_request}
+    - Počet uživatelů: {state.expected_users}
+    - Požadované moduly: {', '.join(state.modules)}
+    - Integrace: {', '.join(state.integrations) if state.integrations else 'Není specifikováno'}
+    - Školení: {', '.join(state.training) if state.training else 'Není specifikováno'}
+    
+    Kontext z podobných nabídek:
+    {context}
+    
+    Vytvoř detailní cenovou nabídku, která:
+    1. Začíná úvodním odstavcem shrnujícím cenovou nabídku
+    2. Obsahuje seznam položek s cenami (v Kč bez DPH)
+    3. Pro každou položku uvádí její název a cenu
+    4. Končí součtem s celkovou cenou
+    
+    Formátuj výstup jako souvislý text s nadpisy a odstavci.
+    Výstup MUSÍ být čistý text, bez JSON struktur nebo kódu!
+    """
+    
+    messages = [
+        SystemMessage(content=system_prompt),
+        HumanMessage(content=pricing_prompt)
+    ]
+    
+    add_log("Generuji cenovou nabídku...")
+    response = st.session_state.llm.invoke(messages)
+    return response.content
+
 def create_proposal_document(state: ProposalState) -> str:
     """Vytvoří dokument s nabídkou na základě získaných informací a uloží jej do adresáře generated_proposals."""
     
     try:
+        add_log("Začínám generovat nabídku...")
+        
         # Inicializace dokumentu
         doc = Document()
         
@@ -142,143 +334,37 @@ def create_proposal_document(state: ProposalState) -> str:
         date_str = now.strftime("%d.%m.%Y")
         doc.add_paragraph(f'Datum: {date_str}')
         
-        # Hledání relevantního kontextu
-        context = ""
-        if state.client_request:
-            similar_proposals = search_proposals(state.client_request)
-            if similar_proposals:
-                context = "\n".join([p["content"] for p in similar_proposals[:3]])
-        
-        # Základní systémový prompt pro všechny sekce
-        base_system_prompt = """Jsi profesionální business konzultant s rozsáhlými znalostmi v oblasti implementace MidPoint.
-        Tvým úkolem je vytvořit profesionální část obchodní nabídky, která bude:
-        - Věcná a konkrétní
-        - Profesionální a formální
-        - V českém jazyce
-        - Bez technického žargonu, srozumitelná pro business stakeholdery
-        - Přehledně strukturovaná
-        
-        DŮLEŽITÉ: Tvůj výstup MUSÍ být čistý text s běžným formátováním (odstavce, odrážky), 
-        NE kód, NE JSON, NE dictionary ani jiné datové struktury!
-        """
-        
         # ===== SEKCE 1: POPIS ŘEŠENÍ =====
         doc.add_heading('2. Popis řešení', level=1)
-        solution_prompt = f"""Vytvoř profesionální "Popis řešení" pro nabídku implementace MidPoint.
-        
-        Informace:
-        - Poptávka klienta: {state.client_request}
-        - Počet uživatelů: {state.expected_users}
-        - Požadované moduly: {', '.join(state.modules)}
-        - Integrace: {', '.join(state.integrations) if state.integrations else 'Není specifikováno'}
-        
-        Kontext z podobných nabídek:
-        {context}
-        
-        Vytvoř stručný, ale informativní popis MidPoint řešení, který:
-        1. Vysvětlí co je MidPoint a jaké jsou jeho hlavní přínosy
-        2. Zdůrazní klíčové funkce relevantní pro tohoto klienta
-        3. Popíše, jak řešení adresuje klientovy potřeby z poptávky
-        
-        DŮLEŽITÉ: Výstup formátuj jako běžný text s odstavci, NE jako JSON nebo Python dictionary!
-        """
-        
-        messages = [
-            SystemMessage(content=base_system_prompt),
-            HumanMessage(content=solution_prompt)
-        ]
-        solution_response = st.session_state.llm.invoke(messages)
-        doc.add_paragraph(solution_response.content)
+        solution_text = generate_solution_description(state)
+        # Rozdělení textu na odstavce a přidání každého zvlášť
+        for paragraph in solution_text.split('\n\n'):
+            if paragraph.strip():  # Přidá pouze neprázdné odstavce
+                doc.add_paragraph(paragraph.strip())
         
         # ===== SEKCE 2: ROZSAH PRACÍ =====
         doc.add_heading('3. Rozsah prací', level=1)
-        scope_prompt = f"""Vytvoř profesionální sekci "Rozsah prací" pro nabídku implementace MidPoint.
-        
-        Informace:
-        - Poptávka klienta: {state.client_request}
-        - Požadované moduly: {', '.join(state.modules)}
-        - Integrace: {', '.join(state.integrations) if state.integrations else 'Není specifikováno'}
-        - Školení: {', '.join(state.training) if state.training else 'Není specifikováno'}
-        
-        Kontext z podobných nabídek:
-        {context}
-        
-        Vytvoř přehledně strukturovaný popis rozsahu prací, který:
-        1. Začíná úvodním odstavcem shrnujícím celkový rozsah implementace
-        2. Obsahuje seznam konkrétních oblastí práce (5-6 položek)
-        3. Každou oblast detailně popíše včetně očekávaných výstupů
-        
-        Formátuj výstup jako souvislý text s nadpisy a odstavci. 
-        DŮLEŽITÉ: Výstup MUSÍ být čistý text, NE kód, NE JSON struktura, NE Python dictionary!
-        """
-        
-        messages = [
-            SystemMessage(content=base_system_prompt),
-            HumanMessage(content=scope_prompt)
-        ]
-        scope_response = st.session_state.llm.invoke(messages)
-        doc.add_paragraph(scope_response.content)
+        scope_text = generate_scope_of_work(state)
+        # Rozdělení textu na odstavce a přidání každého zvlášť
+        for paragraph in scope_text.split('\n\n'):
+            if paragraph.strip():
+                doc.add_paragraph(paragraph.strip())
         
         # ===== SEKCE 3: HARMONOGRAM =====
         doc.add_heading('4. Harmonogram', level=1)
-        timeline_prompt = f"""Vytvoř profesionální sekci "Harmonogram" pro nabídku implementace MidPoint.
-        
-        Informace:
-        - Poptávka klienta: {state.client_request}
-        - Požadovaný termín dokončení: {state.deadline}
-        - Rozsah prací: {', '.join(state.modules)}
-        - Integrace: {', '.join(state.integrations) if state.integrations else 'Není specifikováno'}
-        
-        Kontext z podobných nabídek:
-        {context}
-        
-        Vytvoř přehledný harmonogram implementace, který:
-        1. Začíná úvodním odstavcem shrnujícím celkovou dobu implementace
-        2. Obsahuje seznam jednotlivých fází (analýza, návrh, implementace, testování, atd.)
-        3. Pro každou fázi uvádí její název, dobu trvání a stručný popis aktivit
-        4. Končí závěrečným odstavcem shrnujícím celkový časový plán
-        
-        Formátuj výstup jako souvislý text s nadpisy, odstavci a případně s přehlednou tabulkou fází.
-        DŮLEŽITÉ: Výstup MUSÍ být čistý text, NE kód, NE JSON struktura, NE Python dictionary!
-        """
-        
-        messages = [
-            SystemMessage(content=base_system_prompt),
-            HumanMessage(content=timeline_prompt)
-        ]
-        timeline_response = st.session_state.llm.invoke(messages)
-        doc.add_paragraph(timeline_response.content)
+        timeline_text = generate_timeline(state)
+        # Rozdělení textu na odstavce a přidání každého zvlášť
+        for paragraph in timeline_text.split('\n\n'):
+            if paragraph.strip():
+                doc.add_paragraph(paragraph.strip())
         
         # ===== SEKCE 4: CENOVÁ NABÍDKA =====
         doc.add_heading('5. Cenová nabídka', level=1)
-        pricing_prompt = f"""Vytvoř profesionální sekci "Cenová nabídka" pro implementaci MidPoint.
-        
-        Informace:
-        - Poptávka klienta: {state.client_request}
-        - Počet uživatelů: {state.expected_users}
-        - Požadované moduly: {', '.join(state.modules)}
-        - Integrace: {', '.join(state.integrations) if state.integrations else 'Není specifikováno'}
-        - Školení: {', '.join(state.training) if state.training else 'Není specifikováno'}
-        
-        Kontext z podobných nabídek:
-        {context}
-        
-        Vytvoř detailní cenovou nabídku, která:
-        1. Začíná úvodním odstavcem shrnujícím cenovou nabídku
-        2. Obsahuje seznam položek s cenami (v Kč bez DPH)
-        3. Pro každou položku uvádí její název a cenu
-        4. Končí součtem s celkovou cenou
-        
-        Formátuj výstup jako souvislý text s nadpisy, odstavci a přehlednou tabulkou cen.
-        DŮLEŽITÉ: Výstup MUSÍ být čistý text, NE kód, NE JSON struktura, NE Python dictionary!
-        """
-        
-        messages = [
-            SystemMessage(content=base_system_prompt),
-            HumanMessage(content=pricing_prompt)
-        ]
-        pricing_response = st.session_state.llm.invoke(messages)
-        doc.add_paragraph(pricing_response.content)
+        pricing_text = generate_pricing(state)
+        # Rozdělení textu na odstavce a přidání každého zvlášť
+        for paragraph in pricing_text.split('\n\n'):
+            if paragraph.strip():
+                doc.add_paragraph(paragraph.strip())
         
         # Uložení dokumentu
         # Vytvoření složky pro vygenerované nabídky, pokud neexistuje
