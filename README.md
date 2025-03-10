@@ -148,7 +148,7 @@ Finální krok je generování dokumentu ve formátu DOCX:
    - Systém používá šablony ze složky `data/templates/`
    - Šablony obsahují zástupné symboly, které jsou nahrazeny generovaným obsahem
 
-2. **Generování obsahu**:
+2. **Generování obsahu**:q
    - LLM model generuje obsah na základě klientské poptávky a nalezených relevantních částí
    - Obsah je strukturován podle požadavků na obchodní nabídku
 

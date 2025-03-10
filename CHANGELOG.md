@@ -1,5 +1,16 @@
 # Changelog
 
+## [1.2.0] - 2023-07-16
+
+### Změněno
+- Vyčištění projektu od testovacích skriptů a nepotřebných souborů
+- Aktualizace souboru .gitignore pro lepší ignorování systémových a cache souborů
+
+### Odstraněno
+- Testovací skripty: test_import.py, test_pdf_import.py, test_document_creation.py, test_state_transition.py, test_proposal_generation.py
+- Pomocné skripty pro testování: create_test_pdf.py, convert_text_to_pdf.py, convert_docx_to_pdf.py
+- Původní implementace pdfintelisearch.py
+
 ## [1.1.0] - 2023-07-15
 
 ### Přidáno
