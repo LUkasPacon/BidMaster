@@ -2,6 +2,9 @@
 
 ## [1.2.0] - 2023-07-16
 
+### Přidáno
+- Podrobná dokumentace o orchestraci pomocí SimpleStateGraph
+
 ### Změněno
 - Vyčištění projektu od testovacích skriptů a nepotřebných souborů
 - Aktualizace souboru .gitignore pro lepší ignorování systémových a cache souborů

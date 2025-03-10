@@ -126,7 +126,37 @@ Pro interaktivní generování nabídek BidMaster používá LangGraph, což je 
    - Rozhodnutí je založeno na aktuálním stavu konverzace a uživatelském vstupu
    - Systém dokáže detekovat, kdy má dostatek informací pro generování nabídky
 
-### 3. Chunking a správa metadat
+### 3. Orchestrace pomocí SimpleStateGraph
+
+BidMaster používá vlastní implementaci orchestrace prostřednictvím třídy `SimpleStateGraph`, která řídí tok zpracování poptávky a generování nabídky:
+
+1. **Stavový automat (SimpleStateGraph)**:
+   - Třída `SimpleStateGraph` implementuje jednoduchý stavový automat
+   - Definuje uzly (kroky) a přechody mezi nimi
+   - Řídí tok zpracování na základě aktuálního stavu a vstupů od uživatele
+
+2. **Definované stavy procesu**:
+   - `ANALYZE_REQUEST` - Analýza poptávky klienta a identifikace chybějících informací
+   - `GATHER_INFORMATION` - Interaktivní sběr doplňujících informací od uživatele
+   - `GENERATE_PROPOSAL` - Generování obsahu nabídky na základě shromážděných informací
+   - `CREATE_DOCUMENT` - Vytvoření dokumentu s nabídkou ve formátu DOCX
+   - `HUMAN_FEEDBACK` - Interakce s uživatelem pro získání zpětné vazby k nabídce
+   - `END` - Ukončení procesu generování nabídky
+
+3. **Rozhodovací logika přechodů**:
+   - Automatické přechody mezi stavy na základě splnění podmínek
+   - Detekce příkazů od uživatele (např. "vytvoř nabídku")
+   - Automatický přechod k vytvoření nabídky po získání dostatečného množství informací
+   - Prevence zacyklení a nekonečné rekurze pomocí počítadla kroků
+
+4. **Zpracování chyb**:
+   - Robustní zpracování chyb s přechodem do stavu interakce s uživatelem
+   - Logování průběhu zpracování pro snadnější diagnostiku problémů
+   - Možnost zotavení z chybových stavů pomocí uživatelského vstupu
+
+Tato orchestrace zajišťuje plynulý a řízený průběh celého procesu od analýzy poptávky až po vytvoření finálního dokumentu s nabídkou, přičemž umožňuje flexibilní interakci s uživatelem v každém kroku.
+
+### 4. Chunking a správa metadat
 
 Pro efektivní práci s dokumenty BidMaster používá techniku "chunking":
 
@@ -140,7 +170,7 @@ Pro efektivní práci s dokumenty BidMaster používá techniku "chunking":
    - Metadata zahrnují zdroj, název, jméno klienta, datum, verzi a pozici chunku v dokumentu
    - Velikost metadat je omezena, aby nepřekročila limity Pinecone (40 KB)
 
-### 4. Generování dokumentů
+### 5. Generování dokumentů
 
 Finální krok je generování dokumentu ve formátu DOCX:
 
